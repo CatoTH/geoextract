@@ -189,5 +189,6 @@ if __name__ == '__main__':
         with io.open(filename, 'r', encoding='utf-8') as f:
             text = f.read()
         locations = pipeline.extract(text)
-        pprint(sorted(locations))
+        pprint(locations)
+        #pprint(sorted(locations))
 

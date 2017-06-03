@@ -156,16 +156,16 @@ class NameExtractor(Extractor):
         self._automaton = ahocorasick.Automaton()
         for name in pipeline.normalized_names:
             name = name.strip()
-            b = (' ' + name + ' ').encode('utf-8')
+            b = (' ' + name + ' ')
             self._automaton.add_word(b, name)
         self._automaton.make_automaton()
 
     def extract(self, text):
         # Pad with spaces and encode, see __init__
-        b = (' ' + text + ' ').encode('utf-8')
+        b = (' ' + text + ' ')
         for end_index, name in self._automaton.iter(b):
             end_index -= 1  # Because of space-padding of key
-            end_index = len(b[1:end_index + 1].decode('utf-8')) - 1
+            end_index = len(b[1:end_index + 1]) - 1
             length = len(name)  # ``name`` is the original Unicode name
             yield (end_index - length + 1, length, {'name': name})
 
@@ -294,7 +294,7 @@ class PatternExtractor(WindowExtractor):
         for pattern in self.patterns:
             m = pattern.search(window)
             if m:
-                yield {k: v for k, v in m.groupdict().iteritems()
+                yield {k: v for k, v in m.groupdict().items()
                        if v is not None}
 
 
@@ -366,7 +366,7 @@ class Pipeline(object):
         Create a map with normalized location names.
         '''
         self.normalized_names = {}
-        for location in self.locations.itervalues():
+        for location in self.locations.values():
             normalized_name = self.normalizer.normalize(location['name'])
             self.normalized_names[normalized_name] = location
             for alias in location.get('aliases', []):
@@ -393,7 +393,7 @@ class Pipeline(object):
         '''
         Extract locations from a text.
         '''
-        parts = map(self.normalizer.normalize, self.splitter.split(text))
+        parts = list(map(self.normalizer.normalize, self.splitter.split(text)))
         results = []
         for part in parts:
             candidates = []
@@ -565,6 +565,6 @@ class KeyFilterPostprocessor(object):
         self.keys = set(keys)
 
     def postprocess(self, location):
-        return {key: value for key, value in location.iteritems()
+        return {key: value for key, value in location.items()
                 if key in self.keys}
 

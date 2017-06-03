@@ -112,7 +112,7 @@ class WhitespaceSplitter(object):
             mask = labels[obj] != i + 1
             region = np.copy(a[obj])
             region[mask] = ord(' ')
-            part = '\n'.join(''.join(unichr(c or ord(' ')) for c in row)
+            part = '\n'.join(''.join(chr(c or ord(' ')) for c in row)
                              for row in region.tolist())
             parts.append(part)
         return parts
